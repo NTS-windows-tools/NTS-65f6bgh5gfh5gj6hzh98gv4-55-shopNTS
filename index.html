@@ -268,7 +268,7 @@
             const photoUrl = product.Foto && product.Foto.split(',')[0].trim();
             const imageHtml = photoUrl
                 // Použijeme placeholder, protože nechceme v seznamu nutně na malé kartě zobrazovat obrázek z externího zdroje
-                ? `<div class="image-placeholder h-40">Náhled NTS Foto</div>`
+                ? `<div class="image-placeholder h-40">Foto dostupné po otevření produktu</div>`
                 : `<div class="image-placeholder h-40">Není k dispozici náhled obrázku</div>`;
 
             card.innerHTML = `
@@ -532,3 +532,4 @@
 </body>
 
 </html>
+
