@@ -62,7 +62,7 @@
     <div class="container mx-auto max-w-6xl p-4 md:p-8">
 
         <h1 class="text-4xl font-extrabold text-gray-900 mb-6">NTS E-shop</h1>
-        <p class="text-lg text-gray-600 mb-8">Zde naleznete aktuální nabídku produktů. Vyberte, prosím, kategorii. Vyberte, prosím, kategorii. Vše za bezkonkurenční ceny, výhodné nabídky a sposuta levných produktů!</p>
+        <p class="text-lg text-gray-600 mb-8">Zde naleznete aktuální nabídku produktů. Vyberte si prosím kategorii. Vše za bezkonkurenční ceny, výhodné nabídky a sposuta levných produktů! Rychlé doručení na spoustu produktů při osobním odběru!</p>
 
         <!-- KATEGORIE - DVA VELKÉ VÝBĚROVÉ TLAČÍTKA -->
         <div id="initial-category-select" class="flex flex-col md:flex-row gap-6 mb-8 h-80">
@@ -153,7 +153,7 @@
                         Zpět
                     </button>
                     <button type="submit" id="btn-next-step" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-200">
-                        Další
+                        Objednat
                     </button>
                 </div>
             </form>
@@ -313,7 +313,7 @@
             currentCategoryTitle.textContent = categoryName;
 
             if (!products || Object.keys(products).length === 0) {
-                productList.innerHTML = `<p class="col-span-full text-center text-gray-500 p-8">Nebyly nalezeny žádné produkty v databázi.</p>`;
+                productList.innerHTML = `<p class="col-span-full text-center text-gray-500 p-8">Jejda, nejsou tady žádné produkty na prodej. Nabídka je aktuálně prázdná. Můžete ještě zkusit aktualizovat stránku, třeba jde jen o chybu v načtení. Pokud i po aktulizaci stránky vidíte tento text, tak sem rozhodně zavítejte později - již brzy budou skladem nové produkty a kusy!</p>`;
                 return;
             }
 
@@ -435,7 +435,7 @@
 
             // 2. Validace dostupnosti
             if (purchaseQuantity > availableKusy) {
-                quantityErrorMessage.textContent = `Litujeme, ale skladem máme pouze tolik kusů: ${availableKusy} ks. Více nemůžeme poskytnout.`;
+                quantityErrorMessage.textContent = `Litujeme, ale skladem máme pouze tolik kusů: ${availableKusy} ks. Více aktuálně nemůžeme poskytnout.`;
                 quantityErrorMessage.classList.remove('hidden');
                 return;
             }
@@ -530,4 +530,5 @@
         document.getElementById('btn-select-bazar').addEventListener('click', () => selectCategory('Bazar'));
     </script>
 </body>
+
 </html>
