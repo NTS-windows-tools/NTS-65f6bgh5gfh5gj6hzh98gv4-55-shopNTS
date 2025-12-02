@@ -428,7 +428,7 @@
             quantityErrorMessage.classList.add('hidden'); 
 
             if (isNaN(purchaseQuantity) || purchaseQuantity <= 0 || !quantityInput.match(/^\d+$/)) {
-                quantityErrorMessage.textContent = "Napište pouze číslo, kolik chcete kusů! POUZE ČÍSLO!";
+                quantityErrorMessage.textContent = "Napište pouze číslo, kolik chcete kusů! POUZE ČÍSLO! Poznámka: Číslo také musí být větší než 0, nelze objednat 0 kusů a méně!";
                 quantityErrorMessage.classList.remove('hidden');
                 return;
             }
@@ -532,5 +532,6 @@
 </body>
 
 </html>
+
 
 
