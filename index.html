@@ -66,8 +66,17 @@
             <button data-category="Nove" id="btn-select-nove" class="flex-1 flex flex-col items-center justify-center text-3xl font-extrabold text-white p-12 rounded-2xl shadow-2xl transition duration-300 hover:scale-[1.02] bg-green-500 hover:bg-green-600">
                 Nové produkty
             </button>
-            <button data-category="Bazar" id="btn-select-bazar" class="flex-1 flex flex-col items-center justify-center text-3xl font-extrabold text-white p-12 rounded-2xl shadow-2xl transition duration-300 hover:scale-[1.02] bg-orange-500 hover:bg-orange-600">
+            <button id="btn-select-bazar" class="flex-1 flex flex-col items-center justify-center text-3xl font-extrabold text-white p-12 rounded-2xl shadow-2xl transition duration-300 hover:scale-[1.02] bg-orange-500 hover:bg-orange-600">
                 Bazárek
+            </button>
+        </div>
+
+        <div id="bazar-submenu" class="hidden flex flex-col md:flex-row gap-6 mb-8 h-80">
+            <button onclick="window.location.href='https://PRIPRAVUJEME,CEKEJTE'" class="flex-1 flex flex-col items-center justify-center text-3xl font-extrabold text-white p-12 rounded-2xl shadow-2xl transition duration-300 hover:scale-[1.02] bg-blue-600 hover:bg-blue-700">
+                Aukce: vyhraj a nakup
+            </button>
+            <button id="btn-bazar-direct" class="flex-1 flex flex-col items-center justify-center text-3xl font-extrabold text-white p-12 rounded-2xl shadow-2xl transition duration-300 hover:scale-[1.02] bg-orange-500 hover:bg-orange-600">
+                Bazárek: nakup ihned
             </button>
         </div>
 
@@ -140,7 +149,7 @@
             
             <form id="offer-price-form">
                 <label class="block text-gray-700 font-bold mb-2">Zde nabídněte svou cenu:</label>
-                <input type="text" pattern="[0-9]*" id="offer-price-input" class="w-full border border-gray-300 p-3 rounded-lg mb-4" placeholder="Zapište pouze číslo bez znaku Kč, např. 500" required>
+                <input type="text" pattern="[0-9]*" id="offer-price-input" class="w-full border border-gray-300 p-3 rounded-lg mb-4" placeholder="Zapište pouze číslo bez znaku Kč, Např. 500" required>
                 
                 <div class="flex justify-end gap-3">
                     <button type="button" id="btn-cancel-offer" class="bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded-lg">Zrušit</button>
@@ -167,7 +176,7 @@
                         Zpět
                     </button>
                     <button type="submit" id="btn-next-step" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-200">
-                        Další
+                        Objednat
                     </button>
                 </div>
             </form>
@@ -184,13 +193,13 @@
                     <h4 class="text-lg font-bold text-gray-700 mb-2">Jak chcete zaplatit?</h4>
                     <div class="space-y-2">
                         <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
-                            <input type="radio" name="paymentMethod" value="Hotově předem ihned před objednání" checked class="h-5 w-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                            <input type="radio" name="paymentMethod" value="Hotově předem" checked class="h-5 w-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
                             <span class="ml-3 text-gray-700">Zaplatit hotově předem ihned po objednávce</span>
                         </label>
                         
                         <label id="option-cod" class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 hidden">
-                            <input type="radio" name="paymentMethod" value="Dobírka po převzetí objednávky + 39 Kč" class="h-5 w-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-                            <span class="ml-3 text-gray-700">Zaplatit hotově při převzetí zboží dobírkou (+ 39 Kč)</span>
+                            <input type="radio" name="paymentMethod" value="Dobírka" class="h-5 w-5 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+                            <span class="ml-3 text-gray-700">Zaplatit hotově při převzetí zboží (+ 39 Kč)</span>
                         </label>
                     </div>
                 </div>
@@ -214,7 +223,7 @@
                         Zpět
                     </button>
                     <button type="submit" class="bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 text-lg">
-                        Objednat
+                        Dokončit a potvrdit objednávku
                     </button>
                 </div>
             </form>
@@ -253,7 +262,7 @@
         let allProducts = {};
         let currentFilter = null;
         let currentReservationKey = null;
-        let pendingQuantity = 0; // Uložení množství před druhým krokem
+        let pendingQuantity = 0;
 
         // DOM Elementy
         const productList = document.getElementById('product-list');
@@ -375,6 +384,7 @@
         function selectCategory(category) {
             currentFilter = category;
             document.getElementById('initial-category-select').classList.add('hidden');
+            document.getElementById('bazar-submenu').classList.add('hidden'); // Skrýt i submenu pokud bylo otevřeno
             loadingMessage.classList.add('hidden');
             document.getElementById('product-list-container').classList.remove('hidden');
             renderProductList(allProducts, currentFilter);
@@ -391,11 +401,10 @@
             document.getElementById('detail-product-name').textContent = product.PRODUCT;
             document.getElementById('detail-stav').textContent = product.Stav || 'N/A';
             document.getElementById('detail-popis').textContent = product.Popis || 'Není k dispozici.';
-            document.getElementById('detail-cena').textContent = product.CenaText || 'Cena v popisku produktu!';
+            document.getElementById('detail-cena').textContent = product.CenaText || 'Cena neuvedena.';
             document.getElementById('detail-dostupnost').textContent = product.Dostupnost || 'N/A';
             document.getElementById('detail-kusy').textContent = `${product.Kusy} ks`;
             
-            // Foto logic
             const photoLinkElement = document.getElementById('detail-photo-link');
             const photos = product.Foto ? product.Foto.split(',').map(f => f.trim()).filter(f => f) : [];
             if (photos.length > 0) {
@@ -406,7 +415,6 @@
                 document.querySelector('#detail-image-container .image-placeholder').textContent = "Není k dispozici náhled obrázku";
             }
 
-            // Koupit tlačítko logic
             const btnBuyNow = document.getElementById('btn-buy-now');
             if (product.Kusy > 0) {
                 btnBuyNow.classList.remove('bg-gray-400', 'cursor-not-allowed', 'opacity-50');
@@ -418,32 +426,20 @@
                 btnBuyNow.disabled = true;
             }
 
-            // Nabídka ceny - Tlačítko Logic
             const allowOffer = product.Nastaveni_NabidkaCeny && parseInt(product.Nastaveni_NabidkaCeny, 10) === 1;
-            
             if (allowOffer) {
                 btnOfferPrice.classList.remove('hidden');
-                
-                // Kontrola, zda uživatel již nabídku podal (pro zjednodušení v tomto demu kontrolujeme jen DB stav, 
-                // v reálu by se kontrolovalo ID session nebo local storage, ale zadání říká "blokovat tlačítko tím, že v db je číslo")
-                // Zde se spoléháme na logiku: Pokud je v DB u produktu hodnota, tlacitko zasedne pro vsechny (v tomto jednoduchém demu) 
-                // nebo specificky (pokud bychom měli user auth). Pro tento účel: pokud 'User_Nabidka_Cena' existuje nebo 'User_Nabidka_Stav' == ACCEPTED
-                
                 const offerExists = product.User_Nabidka_Cena != null;
                 const offerAccepted = product.User_Nabidka_Stav === 'ACCEPTED';
 
                 if (offerExists || offerAccepted) {
-                    // Zašednout tlačítko
                     btnOfferPrice.disabled = true;
                     btnOfferPrice.classList.remove('bg-orange-500', 'hover:bg-orange-600');
                     btnOfferPrice.classList.add('bg-gray-400', 'cursor-not-allowed');
-                    btnOfferPrice.title = "Nabídka již byla odeslána";
                 } else {
-                    // Povolit tlačítko
                     btnOfferPrice.disabled = false;
                     btnOfferPrice.classList.add('bg-orange-500', 'hover:bg-orange-600');
                     btnOfferPrice.classList.remove('bg-gray-400', 'cursor-not-allowed');
-                    btnOfferPrice.title = "";
                 }
             } else {
                 btnOfferPrice.classList.add('hidden');
@@ -452,8 +448,7 @@
             showModal('product-detail-modal');
         }
 
-        // === Logika Nabídky Ceny ===
-
+        // Nabídka ceny Logic
         btnOfferPrice.onclick = () => {
              const product = allProducts[currentReservationKey];
              offerModalTitle.textContent = `Nabídněte nám cenu k produktu: ${product.PRODUCT}`;
@@ -470,33 +465,24 @@
         offerPriceForm.onsubmit = async (e) => {
             e.preventDefault();
             const priceInput = document.getElementById('offer-price-input').value;
-
-            if (!priceInput.match(/^\d+$/)) {
-                alert("Zadejte prosím pouze číslo.");
-                return;
-            }
-
+            if (!priceInput.match(/^\d+$/)) { alert("Zadejte prosím pouze číslo."); return; }
             hideModal('offer-price-modal');
             showLoadingScreen("Odesílám nabídku...");
-
             try {
                 await update(ref(db, `products/${currentReservationKey}`), {
                     User_Nabidka_Cena: parseInt(priceInput, 10),
                     User_Nabidka_Stav: 'PENDING'
                 });
                 hideLoadingScreen();
-                showProductDetail(currentReservationKey); // Vrátí se na detail, tlačítko už bude zašedlé
-                alert("Vaše nabídka byla odeslána. Sledujte pravidelně popis produktu - naleznete v něm výsledek vyhodnocení z eshopu.");
+                showProductDetail(currentReservationKey);
+                alert("Vaše nabídka byla odeslána.");
             } catch (err) {
-                console.error(err);
                 hideLoadingScreen();
                 alert("Chyba při odesílání.");
             }
         };
 
-
-        // === Logika Nákupu (Krok 1 - Množství) ===
-
+        // Koupit Logic
         document.getElementById('btn-buy-now').onclick = () => {
             quantityForm.reset();
             quantityErrorMessage.classList.add('hidden');
@@ -517,52 +503,38 @@
             const inputVal = purchaseQuantityInput.value.trim();
             const qty = parseInt(inputVal, 10);
 
-            quantityErrorMessage.classList.add('hidden'); 
-
             if (isNaN(qty) || qty <= 0 || !inputVal.match(/^\d+$/)) {
                 quantityErrorMessage.textContent = "Napište pouze číslo (> 0)!";
                 quantityErrorMessage.classList.remove('hidden');
                 return;
             }
-
             if (qty > availableKusy) {
                 quantityErrorMessage.textContent = `Skladem pouze ${availableKusy} ks.`;
                 quantityErrorMessage.classList.remove('hidden');
                 return;
             }
-            
-            // Krok 1 OK -> Uložit množství a jít na Krok 2
             pendingQuantity = qty;
             hideModal('reservation-modal');
             prepareCheckoutModal(product);
         };
 
-        // === Logika Nákupu (Krok 2 - Platba a Sleva) ===
-
         function prepareCheckoutModal(product) {
-            // Nastavení viditelnosti dobírky
             if (product.Nastaveni_Dobirka && parseInt(product.Nastaveni_Dobirka, 10) === 1) {
                 optionCOD.classList.remove('hidden');
             } else {
                 optionCOD.classList.add('hidden');
             }
-
-            // Nastavení viditelnosti slevového kódu
             if (product.Nastaveni_SlevovyKod && parseInt(product.Nastaveni_SlevovyKod, 10) === 1) {
                 discountSection.classList.remove('hidden');
             } else {
                 discountSection.classList.add('hidden');
             }
-
-            // Reset formuláře
             checkoutForm.reset();
             discountInputContainer.classList.add('hidden');
             noDiscountText.classList.remove('hidden');
-            
             showModal('checkout-options-modal');
         }
 
-        // Ovládání checkboxu slevového kódu
         hasDiscountCheckbox.onchange = (e) => {
             if (e.target.checked) {
                 discountInputContainer.classList.remove('hidden');
@@ -578,24 +550,18 @@
             showModal('reservation-modal');
         };
 
-        // Dokončení objednávky
         checkoutForm.onsubmit = async (e) => {
             e.preventDefault();
-            
             const product = allProducts[currentReservationKey];
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
             let discountCode = "Žádný slevový kód";
-            
             if (hasDiscountCheckbox.checked) {
                 const codeVal = document.getElementById('discount-code-input').value.trim();
                 if (codeVal) discountCode = codeVal;
             }
-
             hideModal('checkout-options-modal');
             showLoadingScreen("Autorizuji a dokončuji objednávku...");
-
             const currentObjednano = parseInt(product.Objednano || 0, 10);
-            
             const updates = {
                 Kusy: parseInt(product.Kusy || 0) - pendingQuantity,
                 Reservation: 1,
@@ -603,30 +569,32 @@
                 Objednavka_Platba: paymentMethod,
                 Objednavka_Sleva: discountCode
             };
-
             try {
                 await update(ref(db, `products/${currentReservationKey}`), updates);
-                
                 const requiresEmail = parseInt(product.Email, 10) === 1;
                 let redirectUrl = requiresEmail 
                     ? "https://nutny-mail-el-licence-objednavka-dokonceni-545664dc564f.mystrikingly.com/"
                     : "https://neni-nutny-mail-dokonceni-objednavky-54645456df4.mystrikingly.com/";
-                
                 window.location.href = redirectUrl;
-
             } catch (error) {
-                console.error(error);
                 hideLoadingScreen();
                 showToast("Chyba při objednávce.", true);
             }
         };
 
-
         // === Inicializace ===
 
         document.getElementById('btn-close-detail').onclick = () => hideModal('product-detail-modal');
         document.getElementById('btn-select-nove').onclick = () => selectCategory('Nove');
-        document.getElementById('btn-select-bazar').onclick = () => selectCategory('Bazar');
+        
+        // Funkce pro Bazárek rozcestník
+        document.getElementById('btn-select-bazar').onclick = () => {
+            document.getElementById('initial-category-select').classList.add('hidden');
+            document.getElementById('bazar-submenu').classList.remove('hidden');
+        };
+
+        // Funkce pro přímý vstup do Bazárku ze submenu
+        document.getElementById('btn-bazar-direct').onclick = () => selectCategory('Bazar');
 
         let initialDataLoaded = false;
         onValue(productsRef, (snapshot) => {
@@ -641,6 +609,4 @@
 
     </script>
 </body>
-
 </html>
-
