@@ -401,7 +401,7 @@
             document.getElementById('detail-product-name').textContent = product.PRODUCT;
             document.getElementById('detail-stav').textContent = product.Stav || 'N/A';
             document.getElementById('detail-popis').textContent = product.Popis || 'Není k dispozici.';
-            document.getElementById('detail-cena').textContent = product.CenaText || 'Cena neuvedena.';
+            document.getElementById('detail-cena').textContent = product.CenaText || 'Cena je uvedena v popisu produktu.';
             document.getElementById('detail-dostupnost').textContent = product.Dostupnost || 'N/A';
             document.getElementById('detail-kusy').textContent = `${product.Kusy} ks`;
             
@@ -610,5 +610,6 @@
     </script>
 </body>
 </html>
+
 
 
